@@ -1,0 +1,55 @@
+#include<iostream>
+class homeAnimall
+{
+protected:
+	std::string name;
+	std::string type;
+	int hight;
+	homeAnimall(std::string name_, std::string type_, int hight_) :name{ name_ }, type{ type_ }, hight{ hight_ } {};
+public:
+	void setType(std::string type_)
+	{
+		type = type_;
+	}
+	std::string getType()
+	{
+		return type;
+	}
+	int getHight()
+	{
+		return hight;
+	}
+	void setHight(int hight_)
+	{
+		hight = hight_;
+	}
+	std::string getName()
+	{
+		return name;
+	}
+	void setName(std::string name_)
+	{
+		name = name_;
+	}
+};
+class Cat : public homeAnimall
+{
+public:
+	Cat(std::string name_, std::string type_, int  hight_) : homeAnimall(name_, type_, hight_) {};
+};
+class Dog : public homeAnimall
+{
+public:
+	Dog(std::string name_, std::string type_, int  hight_) : homeAnimall(name_, type_, hight_) {};
+};
+class Parrot : public homeAnimall
+{
+public:
+	Parrot(std::string name_, std::string type_, int  hight_) : homeAnimall(name_, type_, hight_) {};
+};
+int main()
+{
+	Dog Tuzik("Tuzik", "Dog", 14);
+	Cat Murka("Murka", "Cat", 10);
+	Parrot Kesha("Kesha", "Bird", 5);
+}
