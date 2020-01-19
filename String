@@ -1,0 +1,139 @@
+#include<iostream>
+class String
+{
+	char* string;
+public:
+	String(const char* string_)
+	{
+		string = new char[strlen(string_) + 1];
+		strcpy_s(string, strlen(string_) + 1, string_);
+	}
+	String() :String("") {};
+	~String()
+	{
+		delete[] string;
+	}
+	String(const String& str)
+	{
+		string = new char[strlen(str.string) + 1];
+		strcpy_s(string, strlen(str.string) + 1, str.string);
+	}
+	size_t getSize()
+	{
+		return strlen(string);
+	}
+	void operator = (const String& rhs)
+	{
+		if (strlen(string) + 1 > strlen(rhs.string) + 1)
+		{
+			strcpy_s(string, strlen(rhs.string) + 1, rhs.string);
+		}
+		else
+		{
+			delete[] string;
+			string = new char[strlen(rhs.string) + 1];
+			strcpy_s(string, strlen(rhs.string) + 1, rhs.string);
+		}
+	}
+	void operator = (char rhs[])
+	{
+		if (strlen(string) + 1 > strlen(rhs) + 1)
+		{
+			strcpy_s(string, strlen(rhs) + 1, rhs);
+		}
+		else
+		{
+			delete[] string;
+			string = new char[strlen(rhs) + 1];
+			strcpy_s(string, strlen(rhs) + 1, rhs);
+		}
+	}
+	void clear()
+	{
+		delete string;
+		string = new char[1]{ "" };
+	}
+	char operator [](size_t idx)
+	{
+		return string[idx];
+		//Aбо...
+		return *(string + idx);
+		//Якщо треба 2 то просто поміняти місцями щоб працювало
+	}
+	int operator ()(const char obj)
+	{
+		for (int i = 0; i < strlen(string); ++i)
+		{
+			if (obj == string[i])
+			{
+				return i;
+			}
+		}
+		return -1;
+	}
+	bool operator ==(const String& str)
+	{
+		return !(strcmp(this->string, str.string));
+	}
+	String& operator +=(String& rhs)
+	{
+		*this = *this + rhs;
+		return *this;
+	}
+	friend const String operator +(String& lhs, String& rhs);
+	friend std::ostream& operator<<(std::ostream& out, String& str);
+	friend std::istream& operator>>(std::istream& in, String& str);
+};
+const String operator +(String& lhs, String& rhs)
+{
+	char* copy_string = new char[lhs.getSize() + rhs.getSize() + 1];
+	for (int i = 0; i < lhs.getSize(); ++i)
+	{
+		if (i < lhs.getSize())
+		{
+		  copy_string[i] = lhs[i]; 
+		  continue;
+		}
+	}
+
+	for (int i = lhs.getSize(),d =0; d < rhs.getSize();++d, ++i)
+	{
+		copy_string[i] = rhs[d];
+	}
+	copy_string[lhs.getSize() + rhs.getSize()] = '\0';
+	return String( copy_string );
+}
+std::istream& operator>>(std::istream& in, String& str)
+{
+	char d[900];
+	in >> d;
+	String copy{ d };
+	str = copy;
+	return in;
+}
+std::ostream& operator<<(std::ostream& out, String& str)
+{
+	out << str.string;
+	return out;
+}
+int main()
+{
+	String s1{ "Head" };
+	String menu;
+	std::cin >> menu;
+	menu += s1;
+	std::cout << menu;
+
+
+	//String n{ menu };
+	/*while (1)
+	{
+		system("cls");
+		std::cout << s1;
+		std::cout << "Use new string or Old (1/2)\nEnter_";
+		std::cin >> menu;
+		if (menu == "1")
+			std::cout << "\nEnter you string_";
+		std::cin >> s1;
+	}*/
+}
