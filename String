@@ -1,7 +1,7 @@
 #include<iostream>
 class String
 {
-	char* string;
+	mutable char* string;
 public:
 	String(const char* string_)
 	{
@@ -22,32 +22,6 @@ public:
 	{
 		return strlen(string);
 	}
-	void operator = (const String& rhs)
-	{
-		if (strlen(string) + 1 > strlen(rhs.string) + 1)
-		{
-			strcpy_s(string, strlen(rhs.string) + 1, rhs.string);
-		}
-		else
-		{
-			delete[] string;
-			string = new char[strlen(rhs.string) + 1];
-			strcpy_s(string, strlen(rhs.string) + 1, rhs.string);
-		}
-	}
-	void operator = (char rhs[])
-	{
-		if (strlen(string) + 1 > strlen(rhs) + 1)
-		{
-			strcpy_s(string, strlen(rhs) + 1, rhs);
-		}
-		else
-		{
-			delete[] string;
-			string = new char[strlen(rhs) + 1];
-			strcpy_s(string, strlen(rhs) + 1, rhs);
-		}
-	}
 	void clear()
 	{
 		delete string;
@@ -60,21 +34,6 @@ public:
 		return *(string + idx);
 		//Якщо треба 2 то просто поміняти місцями щоб працювало
 	}
-	int operator ()(const char obj)
-	{
-		for (int i = 0; i < strlen(string); ++i)
-		{
-			if (obj == string[i])
-			{
-				return i;
-			}
-		}
-		return -1;
-	}
-	bool operator ==(const String& str)
-	{
-		return !(strcmp(this->string, str.string));
-	}
 	String& operator +=(String& rhs)
 	{
 		*this = *this + rhs;
@@ -83,7 +42,17 @@ public:
 	friend const String operator +(String& lhs, String& rhs);
 	friend std::ostream& operator<<(std::ostream& out, String& str);
 	friend std::istream& operator>>(std::istream& in, String& str);
+	friend bool operator == (const String& lhs, const String& rhs);
+	friend bool operator != (const String& lhs, const String& rhs);
 };
+bool operator ==(const String& lhs, const String& rhs)
+{
+	return !(strcmp(lhs.string, rhs.string));
+}
+bool operator !=(const String& lhs, const String& rhs)
+{
+	return (strcmp(lhs.string, rhs.string));
+}
 const String operator +(String& lhs, String& rhs)
 {
 	char* copy_string = new char[lhs.getSize() + rhs.getSize() + 1];
@@ -91,17 +60,17 @@ const String operator +(String& lhs, String& rhs)
 	{
 		if (i < lhs.getSize())
 		{
-		  copy_string[i] = lhs[i]; 
-		  continue;
+			copy_string[i] = lhs[i];
+			continue;
 		}
 	}
 
-	for (int i = lhs.getSize(),d =0; d < rhs.getSize();++d, ++i)
+	for (int i = lhs.getSize(), d = 0; d < rhs.getSize(); ++d, ++i)
 	{
 		copy_string[i] = rhs[d];
 	}
 	copy_string[lhs.getSize() + rhs.getSize()] = '\0';
-	return String( copy_string );
+	return String(copy_string);
 }
 std::istream& operator>>(std::istream& in, String& str)
 {
@@ -116,6 +85,11 @@ std::ostream& operator<<(std::ostream& out, String& str)
 	out << str.string;
 	return out;
 }
+class ByteString : public String
+{
+	ByteString() :String("0000000") {};
+
+};
 int main()
 {
 	String s1{ "Head" };
