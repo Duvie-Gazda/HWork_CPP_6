@@ -1,76 +1,91 @@
-#include<iostream>
+#include <iostream>
 class String
 {
-	mutable char* string;
+protected:
+	char* str;
 public:
-	String(const char* string_)
+	String(const char* str_)
 	{
-		string = new char[strlen(string_) + 1];
-		strcpy_s(string, strlen(string_) + 1, string_);
+		str = new char[strlen(str_) + 1];
+		strcpy_s(str, strlen(str_) + 1, str_);
 	}
-	String() :String("") {};
+	String(const String& copy)
+	{
+		str = new char[strlen(copy.str) + 1];
+		strcpy_s(str, strlen(copy.str) + 1, copy.str);
+	}
+	String() : String(" ") {};
 	~String()
 	{
-		delete[] string;
+		delete[] str;
 	}
-	String(const String& str)
+	void operator +=(String& rhs)
 	{
-		string = new char[strlen(str.string) + 1];
-		strcpy_s(string, strlen(str.string) + 1, str.string);
+		*this = *this + rhs;
 	}
-	size_t getSize()
+	int getSize()
 	{
-		return strlen(string);
+		return strlen(str);
 	}
 	void clear()
 	{
-		delete string;
-		string = new char[1]{ "" };
+		delete[] str;
+		str = new char[1]{ "" };
 	}
-	char operator [](size_t idx)
+	virtual String plus(String& rhs)
 	{
-		return string[idx];
-		//Aбо...
-		return *(string + idx);
-		//Якщо треба 2 то просто поміняти місцями щоб працювало
+		char* copy = new char[strlen(str) + strlen(rhs.str) + 1];
+		int num = strlen(str) + 1;
+		for (int i = 0; i <= num; ++i)
+		{
+			copy[i] = str[i];
+		}
+		num = strlen(rhs.str) + 1;
+		for (int i = strlen(str), d = 0; d < num; ++i, ++d)
+		{
+			copy[i] = rhs.str[d];
+		}
+		return String{ copy };
 	}
-	String& operator +=(String& rhs)
+	const char* getString() const
 	{
-		*this = *this + rhs;
-		return *this;
+		return str;
 	}
+	const char operator[](size_t idx)
+	{
+		return str[idx];
+	}
+	virtual void operator = (const String& copy);
 	friend const String operator +(String& lhs, String& rhs);
 	friend std::ostream& operator<<(std::ostream& out, String& str);
 	friend std::istream& operator>>(std::istream& in, String& str);
 	friend bool operator == (const String& lhs, const String& rhs);
 	friend bool operator != (const String& lhs, const String& rhs);
 };
+void String :: operator = (const String& copy)
+{
+	if (strlen(str) >= strlen(copy.str))
+	{
+		strcpy_s(str, strlen(copy.str) + 1, copy.str);
+	}
+	else
+	{
+		delete[] str;
+		str = new char[strlen(copy.str) + 1];
+		strcpy_s(str, strlen(copy.str) + 1, copy.str);
+	}
+}
 bool operator ==(const String& lhs, const String& rhs)
 {
-	return !(strcmp(lhs.string, rhs.string));
+	return !(strcmp(lhs.str, rhs.str));
 }
 bool operator !=(const String& lhs, const String& rhs)
 {
-	return (strcmp(lhs.string, rhs.string));
+	return (strcmp(lhs.str, rhs.str));
 }
 const String operator +(String& lhs, String& rhs)
 {
-	char* copy_string = new char[lhs.getSize() + rhs.getSize() + 1];
-	for (int i = 0; i < lhs.getSize(); ++i)
-	{
-		if (i < lhs.getSize())
-		{
-			copy_string[i] = lhs[i];
-			continue;
-		}
-	}
-
-	for (int i = lhs.getSize(), d = 0; d < rhs.getSize(); ++d, ++i)
-	{
-		copy_string[i] = rhs[d];
-	}
-	copy_string[lhs.getSize() + rhs.getSize()] = '\0';
-	return String(copy_string);
+	return lhs.plus(rhs);
 }
 std::istream& operator>>(std::istream& in, String& str)
 {
@@ -82,32 +97,69 @@ std::istream& operator>>(std::istream& in, String& str)
 }
 std::ostream& operator<<(std::ostream& out, String& str)
 {
-	out << str.string;
-	return out;
+	return 	out << str.str;
 }
-class ByteString : public String
+class BiteString :public String
 {
-	ByteString() :String("0000000") {};
+public:
+	BiteString(const String& copy) :String(copy) { perevirka(); };
+	BiteString() :BiteString("") {};
+	void perevirka()
+	{
+		for (int i = 0; i < getSize(); ++i)
+		{
+			if ((str[i] != '1') and (str[i] != '0'))
+			{
+				clear();
+			}
+		}
+	}
+	virtual String plus(String& rhs)
+	{
+		int num = getSize() > rhs.getSize() ? getSize() : rhs.getSize(), minSize = getSize() < rhs.getSize() ? getSize() : rhs.getSize();
+		char* min = new char[num + 1], * Min = new char[num + 1]{ strlen(str)>rhs.getSize() ? str : rhs.getString() };
+		for (int i = 0; i < num; ++i)
+		{
+			if (i < num - minSize)
+			{
+				min[i] = '0';
+			}
+			else
+			{
+				min[i] =
+			}
+		}
+		char* copy = new char[num + 1]{}, nx = '0';
+		for (int i = 0; i < num; ++i)
+		{
+			copy[i] = '0';
+		}
+		bool next = false;
+		for (int i = num - 1, nn = 0; i >= 0; --i, nn = 0)
+		{
+			nn = (str[i] == '1') + (rhs[i] == '1') + (nx == '1');
+			if (nn > 0)
+			{
+				copy[i] = '1';
+			}
+			else
+			{
+				copy[i] = '0';
+			}
+			nx = '0';
+			if (nn > 1)
+			{
+				nx = '1';
+				continue;
+			}
+		}
+		return String{ copy };
+	}
 
 };
 int main()
 {
-	String s1{ "Head" };
-	String menu;
-	std::cin >> menu;
-	menu += s1;
-	std::cout << menu;
-
-
-	//String n{ menu };
-	/*while (1)
-	{
-		system("cls");
-		std::cout << s1;
-		std::cout << "Use new string or Old (1/2)\nEnter_";
-		std::cin >> menu;
-		if (menu == "1")
-			std::cout << "\nEnter you string_";
-		std::cin >> s1;
-	}*/
+	BiteString D{ "10" }, G{ "0011" };
+	D = D + G;
+	std::cout << D;
 }
