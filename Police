@@ -1,0 +1,416 @@
+#include <iostream>
+template <class T>
+class Tree
+{
+public:
+	struct Node
+	{
+		T data;
+		Node* right;
+		Node* left;
+		Node(const T& data_, Node* right_ = nullptr, Node* left_ = nullptr) : data{ data_ }, right{ right_ }, left{ left_ }{};
+	};
+private:
+	Node* root;
+public:
+	Tree() :root{ nullptr } {};
+	//void add(const T& data)
+	//{
+	//	if (!root)
+	//	{
+	//		root = new Node{ data };
+	//	}
+	//	else
+	//	{
+	//		Add(data, root);
+	//	}
+	//}
+	//bool search(const T& data)
+	//{
+	//	if (!root)
+	//	{
+	//		return false;
+	//	}
+	//	else
+	//	{
+	//		return Search(data, root);
+	//	}
+	//}
+	//friend void Add(const T& data, Node* n)
+	//{
+	//	if (n->data > data)
+	//	{
+	//		if (n->left)
+	//		{
+	//			Add(data, n->left);
+	//		}
+	//		else
+	//		{
+	//			n->left = new Node{ data };
+	//		}
+	//	}
+	//	if (n->data < data)
+	//	{
+	//		if (n->right)
+	//		{
+	//			Add(data, n->right);
+	//		}
+	//		else
+	//		{
+	//			n->right = new Node{ data };
+	//		}
+	//	}
+	//}
+	//friend bool Search(const T& data, Node* n)
+	//{
+	//	if (n->data == data)
+	//	{
+	//		return true;
+	//	}
+	//	if (n->data > data)
+	//	{
+	//		if (n->left)
+	//		{
+	//			return Search(data, n->left);
+	//		}
+	//		else
+	//		{
+	//			return false;
+	//		}
+	//	}
+	//	if (n->data < data)
+	//	{
+	//		if (n->right)
+	//		{
+	//			return Search(data, n->right);
+	//		}
+	//		else
+	//		{
+	//			return false;
+	//		}
+	//	}
+	//}
+	//Node* get(T& data)
+	//{
+	//	if (n->data == data)
+	//	{
+	//		return n;
+	//	}
+	//	if (n->data > data)
+	//	{
+	//		if (n->left)
+	//		{
+	//			return Search(data, n->left);
+	//		}
+	//	}
+	//	if (n->data < data)
+	//	{
+	//		if (n->right)
+	//		{
+	//			return Search(data, n->right);
+	//		
+	//	}
+	//}
+	void Add(const T& data)
+	{
+		if (!root)
+		{
+			root = new Node{ data };
+			return;
+		}
+		Node* copy = root;
+		while (1)
+		{
+			if (copy->data > data)
+			{
+				if (!copy->left)
+				{
+					copy->left = new Node{ data };
+					break;
+				}
+				else
+				{
+					copy = copy->left;
+				}
+			}
+			if (copy->data < data)
+			{
+				if (!copy->right)
+				{
+					copy->right = new Node{ data };
+					break;
+				}
+				else
+				{
+					copy = copy->right;
+				}
+			}
+			if (copy->data == data)
+			{
+				return;
+			}
+		}
+	}
+	bool SearchBool(const T& data)
+	{
+		if (Search(data))
+		{
+			return true;
+		}
+		return false;
+	}
+	Node* getRoot()
+	{
+		return root;
+	}
+	Node* Search(const T& data)const
+	{
+		if (!root)
+		{
+			return root;
+		}
+		Node* copy = root;
+		while (1)
+		{
+			if (copy->data > data)
+			{
+				if (!copy->left)
+				{
+					return copy->left;
+				}
+				else
+				{
+					copy = copy->left;
+				}
+			}
+			if (copy->data < data)
+			{
+				if (!copy->right)
+				{
+					return copy->left;
+				}
+				else
+				{
+					copy = copy->right;
+				}
+			}
+			if (copy->data == data)
+			{
+				return copy;
+			}
+		}
+	}
+};
+template<class T>
+class List
+{
+	struct Node
+	{
+		T Data;
+		Node* next;
+		Node(const T& data, Node* n) :Data{ data }, next{ n }{};
+	};
+	int size;
+	Node* head;
+	Node* tail;
+public:
+	List() :size{ 0 }, head{ nullptr }, tail{ nullptr }{};
+	List(T data, int s) :size{ s }
+	{
+		head = tail = new Node{ data, nullptr };
+		Node* N = head;
+		for (int i = 0; i < size; (i == 0 ? head->next = tail = new Node{ data,tail } : N->next = tail = new Node{ data,tail }), ++i);
+	}
+	void Add(T data)
+	{
+		if (head == nullptr)
+		{
+			tail = head = new Node{ data,nullptr };
+		}
+		else
+		{
+			Node* N = head;
+			for (; N->next; N = N->next);
+			N->next = tail = new Node{ data, nullptr };
+		}
+		++size;
+	}
+	void AddFront(T data)
+	{
+		head = new Node{ data,head };
+		++size;
+	}
+	void print()
+	{
+		Node* N = head;
+		std::cout << "\n";
+		for (; N; N = N->next)
+		{
+			std::cout << N->Data << "\n";
+		}
+	}
+	T& operator [](int num)
+	{
+		Node* N = head;
+		for (int i = 0; i < size and i < num and N->next; ++i, N = N->next) {
+			std::cout << "\n" << size << " ";
+			std::cout << " " << i << " ";
+			std::cout << " " << N->Data << "\n";
+		}
+		return N->Data;
+	}
+	T pop_back()
+	{
+		return tail->Data;
+	}
+	T pop_front()
+	{
+		return head->Data;
+	}
+	void delete_back()
+	{
+		if (tail != head)
+		{
+			Node* N = head;
+			for (; N->next != tail; N = N->next);
+			N->next = nullptr;
+			delete tail;
+			tail = N;
+			--size;
+		}
+	}
+	void delete_front()
+	{
+		if (head->next != nullptr)
+		{
+			Node* N = head->next;
+			delete head;
+			head = N;
+			--size;
+		}
+	}
+	int getSize()
+	{
+		return size;
+	}
+	friend T& operator +(List& lhs, List& rhs);
+};
+template<class T>
+T& operator+ (List<T>& lhs, List<T>& rhs)
+{
+	List<T> copy, work;
+	work.AddFront(lhs.pop_front());
+	for (;work; work = work->next)
+	{
+		copy.Add(work->data);
+	}
+	work.AddFront(rhs.pop_front());
+	for (;work; work = work->next)
+	{
+		copy.Add(work->data);
+	}
+	return copy;
+}
+
+class Car
+{
+	int carNum;
+	List<std::string>fine;
+public:
+	Car(const int num) : carNum{ num } {};
+	void addFine(std :: string str)
+	{
+		fine.Add(str);
+	}
+	void Print()
+	{
+		std::cout << "Car num \""<< carNum<< "\"\nAll fines";
+		fine.print();
+	}
+	friend bool operator > (const Car& lhs, const Car& rhs)
+	{
+		return lhs.carNum > rhs.carNum;
+	}
+	friend bool operator < (const Car& lhs, const Car& rhs)
+	{
+		return lhs.carNum < rhs.carNum;
+	}
+	friend bool operator == (const Car& lhs, const Car& rhs)
+	{
+		return lhs.carNum == rhs.carNum;
+	}
+};
+class Police
+{
+	Tree<Car> cars;
+public:
+	void AddFine(const int carNum, const std::string& fine)
+	{
+		if (cars.SearchBool(carNum))
+		{
+	     	auto data = cars.Search(carNum);
+			data->data.addFine(fine);
+		}
+		else
+		{
+			cars.Add(carNum);
+			auto data = cars.Search(carNum);
+			data->data.addFine(fine);
+		}
+	}
+	void PrintCar(const int carNum)
+	{
+		if (cars.SearchBool(carNum))
+		{
+			auto data = cars.Search(carNum);
+			data->data.Print();
+		}
+	}
+	void Print(const int since, const int to)
+	{
+		for (int i = since; i <= to; ++i)
+		{
+			if (cars.SearchBool(i))
+			{
+				auto data = cars.Search(i); 
+				std::cout << std::endl;
+				data->data.Print();
+			}
+		}
+	}
+	void PrintAll()
+	{
+		auto data = cars.getRoot();
+		while (data->left)
+		{
+			data = data->left;
+		}
+		auto i = data->data;
+	}
+};
+int main()
+{
+	Police p;
+	int menu;
+	while (1)
+	{
+		std::cout << "Enter: \n1) Add fine;\n2) Print data about car\n3)Print ";
+		std::cin >> menu;
+		if (menu == 1)
+		{
+			int carNum;
+			std::string fine;
+			std::cout << "Enter car num";
+			std::cin >> carNum;
+			std::cout << "Enter fine";
+			std::cin >> fine;
+			p.AddFine(carNum, fine);
+		}
+		if (menu == 2)
+		{
+
+		}
+	}
+	p.AddFine(99, "Bad parking - 1000$");
+	p.Print(1, 1000);
+}
