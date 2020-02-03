@@ -14,103 +14,6 @@ private:
 	Node* root;
 public:
 	Tree() :root{ nullptr } {};
-	//void add(const T& data)
-	//{
-	//	if (!root)
-	//	{
-	//		root = new Node{ data };
-	//	}
-	//	else
-	//	{
-	//		Add(data, root);
-	//	}
-	//}
-	//bool search(const T& data)
-	//{
-	//	if (!root)
-	//	{
-	//		return false;
-	//	}
-	//	else
-	//	{
-	//		return Search(data, root);
-	//	}
-	//}
-	//friend void Add(const T& data, Node* n)
-	//{
-	//	if (n->data > data)
-	//	{
-	//		if (n->left)
-	//		{
-	//			Add(data, n->left);
-	//		}
-	//		else
-	//		{
-	//			n->left = new Node{ data };
-	//		}
-	//	}
-	//	if (n->data < data)
-	//	{
-	//		if (n->right)
-	//		{
-	//			Add(data, n->right);
-	//		}
-	//		else
-	//		{
-	//			n->right = new Node{ data };
-	//		}
-	//	}
-	//}
-	//friend bool Search(const T& data, Node* n)
-	//{
-	//	if (n->data == data)
-	//	{
-	//		return true;
-	//	}
-	//	if (n->data > data)
-	//	{
-	//		if (n->left)
-	//		{
-	//			return Search(data, n->left);
-	//		}
-	//		else
-	//		{
-	//			return false;
-	//		}
-	//	}
-	//	if (n->data < data)
-	//	{
-	//		if (n->right)
-	//		{
-	//			return Search(data, n->right);
-	//		}
-	//		else
-	//		{
-	//			return false;
-	//		}
-	//	}
-	//}
-	//Node* get(T& data)
-	//{
-	//	if (n->data == data)
-	//	{
-	//		return n;
-	//	}
-	//	if (n->data > data)
-	//	{
-	//		if (n->left)
-	//		{
-	//			return Search(data, n->left);
-	//		}
-	//	}
-	//	if (n->data < data)
-	//	{
-	//		if (n->right)
-	//		{
-	//			return Search(data, n->right);
-	//		
-	//	}
-	//}
 	void Add(const T& data)
 	{
 		if (!root)
@@ -300,12 +203,12 @@ T& operator+ (List<T>& lhs, List<T>& rhs)
 {
 	List<T> copy, work;
 	work.AddFront(lhs.pop_front());
-	for (;work; work = work->next)
+	for (; work; work = work->next)
 	{
 		copy.Add(work->data);
 	}
 	work.AddFront(rhs.pop_front());
-	for (;work; work = work->next)
+	for (; work; work = work->next)
 	{
 		copy.Add(work->data);
 	}
@@ -318,13 +221,17 @@ class Car
 	List<std::string>fine;
 public:
 	Car(const int num) : carNum{ num } {};
-	void addFine(std :: string str)
+	int getCarNum()
+	{
+		return carNum;
+	}
+	void addFine(std::string str)
 	{
 		fine.Add(str);
 	}
 	void Print()
 	{
-		std::cout << "Car num \""<< carNum<< "\"\nAll fines";
+		std::cout << "Car num \"" << carNum << "\"\nAll fines";
 		fine.print();
 	}
 	friend bool operator > (const Car& lhs, const Car& rhs)
@@ -348,7 +255,7 @@ public:
 	{
 		if (cars.SearchBool(carNum))
 		{
-	     	auto data = cars.Search(carNum);
+			auto data = cars.Search(carNum);
 			data->data.addFine(fine);
 		}
 		else
@@ -366,13 +273,13 @@ public:
 			data->data.Print();
 		}
 	}
-	void Print(const int since, const int to)
+	void PrintDiapazone(const int since, const int to)
 	{
 		for (int i = since; i <= to; ++i)
 		{
 			if (cars.SearchBool(i))
 			{
-				auto data = cars.Search(i); 
+				auto data = cars.Search(i);
 				std::cout << std::endl;
 				data->data.Print();
 			}
@@ -381,11 +288,23 @@ public:
 	void PrintAll()
 	{
 		auto data = cars.getRoot();
-		while (data->left)
+		auto dataMax = data;
+		if (data)
 		{
-			data = data->left;
+			while (data->left)
+			{
+				data = data->left;
+			}
+
+			while (dataMax->right)
+			{
+				dataMax = dataMax->right;
+			}
+			for (int i = data->data.getCarNum(), max = data->data.getCarNum(); i < max; ++i)
+			{
+				std::cout <<
+			}
 		}
-		auto i = data->data;
 	}
 };
 int main()
@@ -394,8 +313,10 @@ int main()
 	int menu;
 	while (1)
 	{
-		std::cout << "Enter: \n1) Add fine;\n2) Print data about car\n3)Print ";
+		system("cls");
+		std::cout << "Enter: \n1) Add fine;\n2) Print data about car\n3) Print Diapazone\n4) Print all\n5) Exit\n";
 		std::cin >> menu;
+		system("cls");
 		if (menu == 1)
 		{
 			int carNum;
@@ -408,9 +329,27 @@ int main()
 		}
 		if (menu == 2)
 		{
-
+			int carNum;
+			std::cout << "Enter Car num ";
+			std::cin >> carNum;
+			p.PrintCar(carNum);
+		}
+		if (menu == 3)
+		{
+			int since, to;
+			std::cout << "Enter Since car num print ";
+			std::cin >> since;
+			std::cout << "Enter to car num print ";
+			std::cin >> to;
+			p.PrintDiapazone(since, to);
+		}
+		if (menu == 4)
+		{
+			p.PrintAll();
+		}
+		if (menu == 5)
+		{
+			break;
 		}
 	}
-	p.AddFine(99, "Bad parking - 1000$");
-	p.Print(1, 1000);
 }
